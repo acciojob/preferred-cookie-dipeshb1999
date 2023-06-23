@@ -1,29 +1,98 @@
 <!DOCTYPE html>
-
 <html>
-  <head>
-    <link rel="stylesheet" href="styles.css" />
-  </head>
-
-  <body>
-    <!-- the entire body must be written by student -->
-    <form>
-      <label for="fontsize">Font Size:</label>
-      <input
-        type="number"
-        id="fontsize"
-        name="fontsize"
-        min="8"
-        max="72"
-        value="16"
-      />
-      <br />
-      <label for="fontcolor">Font Color:</label>
-      <input type="color" id="fontcolor" name="fontcolor" value="#000000" />
-      <br />
-      <input type="submit" value="Save" />
-    </form>
-
-    <script type="text/javascript" src="./script.js"></script>
-  </body>
+<head>
+  <title>Customize Page</title>
+  <style>
+    body {
+      font-size: 16px;
+      color: #000000;
+    }
+  </style>
+</head>
+<body>
+  <h1>Customize Page</h1>
+  
+  <form id="preferencesForm">
+    <label for="fontSize">Font Size:</label>
+    <input type="number" id="fontSize" name="fontSize" min="12" max="24" value="16">
+    
+    <label for="fontColor">Font Color:</label>
+    <input type="color" id="fontColor" name="fontColor" value="#000000">
+    
+    <button type="submit">Save Preferences</button>
+  </form>
+  
+  <script>
+    // Function to set the cookie with the provided name, value, and expiration
+    function setCookie(name, value, expiration) {
+      const date = new Date();
+      date.setTime(date.getTime() + (expiration * 24 * 60 * 60 * 1000));
+      const expires = "expires=" + date.toUTCString();
+      document.cookie = name + "=" + value + ";" + expires + ";path=/";
+    }
+    
+    // Function to get the cookie value for the provided name
+    function getCookie(name) {
+      const cookieName = name + "=";
+      const cookies = document.cookie.split(';');
+      
+      for (let i = 0; i < cookies.length; i++) {
+        let cookie = cookies[i];
+        while (cookie.charAt(0) === ' ') {
+          cookie = cookie.substring(1);
+        }
+        if (cookie.indexOf(cookieName) === 0) {
+          return cookie.substring(cookieName.length, cookie.length);
+        }
+      }
+      return "";
+    }
+    
+    // Function to apply the saved preferences from cookies
+    function applyPreferences() {
+      const fontSizeInput = document.getElementById("fontSize");
+      const fontColorInput = document.getElementById("fontColor");
+      
+      // Get the saved preferences from cookies
+      const savedFontSize = getCookie("fontSize");
+      const savedFontColor = getCookie("fontColor");
+      
+      // Apply the saved preferences if available
+      if (savedFontSize) {
+        fontSizeInput.value = savedFontSize;
+        document.body.style.fontSize = savedFontSize + "px";
+      }
+      
+      if (savedFontColor) {
+        fontColorInput.value = savedFontColor;
+        document.body.style.color = savedFontColor;
+      }
+    }
+    
+    // Apply the saved preferences on page load
+    window.addEventListener("load", function() {
+      applyPreferences();
+    });
+    
+    // Handle form submission to save preferences
+    const preferencesForm = document.getElementById("preferencesForm");
+    preferencesForm.addEventListener("submit", function(event) {
+      event.preventDefault(); // Prevent form submission
+      
+      // Get the selected preferences
+      const fontSize = document.getElementById("fontSize").value;
+      const fontColor = document.getElementById("fontColor").value;
+      
+      // Save the preferences in cookies for 30 days
+      setCookie("fontSize", fontSize, 30);
+      setCookie("fontColor", fontColor, 30);
+      
+      // Apply the preferences immediately
+      document.body.style.fontSize = fontSize + "px";
+      document.body.style.color = fontColor;
+      
+      alert("Preferences saved successfully!");
+    });
+  </script>
+</body>
 </html>
